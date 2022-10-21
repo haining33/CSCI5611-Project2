@@ -49,9 +49,9 @@ float dt = 1/frameRate;
 float gravity = 0.02
 
 //Initial positions and velocities of masses
-static int maxNodes = 100;
-Vec2 pos[][] = new Vec2[maxNodes];
-Vec2 vel[][] = new Vec2[maxNodes];
+static int maxNodes = 40;
+Vec2 pos[][] = new Vec2[maxNodes][maxNodes];
+Vec2 vel[][] = new Vec2[maxNodes][maxNodes];
 // Vec2 acc[] = new Vec2[maxNodes];
 
 
@@ -69,7 +69,7 @@ boolean mouse  = false;
 void initClothNodes(){
   for (int j=0; j< numCols; j++){
     for (int i=0; i<numRows; i++){
-      pos[i][j]=new Vec3(clothXStart + l0 * j + clothZStart, clothYStart, clothZStart + l0*i);
+      pos[i][j]= new Vec3(clothXStart + l0 * j + clothZStart, clothYStart, clothZStart + l0 * i);
       vel[i][j] = new Vec3(0,0,0);
     }
   }
@@ -114,7 +114,12 @@ void update(float dt){
     }
   }
 
-
+//gravity
+  for (int j=0; j< numCols; j++){
+    for (int i=0; i<numRows; i++){
+      vel_new[i][j].y += gravity;
+    }
+  }
   
   //Compute (damped) Hooke's law for each spring
   // for (int i = 0; i < numNodes-1; i++){
