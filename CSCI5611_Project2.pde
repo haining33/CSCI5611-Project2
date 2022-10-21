@@ -31,7 +31,7 @@ String windowTitle = "Swinging Rope";
 void setup() {
   size(400, 500, P3D);
   surface.setTitle(windowTitle);
-  initClothNodes()
+  initClothNodes()；
   //initScene();
 }
 
@@ -130,7 +130,10 @@ void update(float dt){
       if(d < sphereR + 0.09){
         Vec3 n = (spherePos.minus(pos[i][j])).times(-1);
         n.normalize();
-        Vec3 bounce = v[i][j]
+        Vec3 bounce = n.times(dot(vel[i][j], n));
+        vel[i][j].subtract(bounce.times(1.5));
+        
+        pos[i][j].add()
       }
   
   
