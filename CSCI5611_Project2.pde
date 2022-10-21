@@ -31,7 +31,7 @@ String windowTitle = "Swinging Rope";
 void setup() {
   size(400, 500, P3D);
   surface.setTitle(windowTitle);
-  initClothNodes()；
+  initClothNodes();
   //initScene();
 }
 
@@ -43,13 +43,13 @@ float kv = 12; //damping factor
 float l0 = 10; //rest length
 
 
-Vec3 spherePos = new Vec3(50, -200, -150)
+Vec3 spherePos = new Vec3(50, -200, -150);
 float sphereR = 100;
 float clothX = 100; 
 float clothY = -50; 
 float clothZ = -200;
 float dt = 1/frameRate;
-float gravity = 0.02
+float gravity = 0.02；
 
 //Initial positions and velocities of masses
 static int maxNodes = 40;
@@ -126,15 +126,16 @@ void update(float dt){
   //collision detection
   for (int i = 0; i < numRows; i++){
     for (int j = 0; j < numCols; j++){
-      d = spherePos.distanceTo(pos[i][j])
+      d = spherePos.distanceTo(pos[i][j]);
       if(d < sphereR + 0.09){
         Vec3 n = (spherePos.minus(pos[i][j])).times(-1);
         n.normalize();
         Vec3 bounce = n.times(dot(vel[i][j], n));
         vel[i][j].subtract(bounce.times(1.5));
         
-        pos[i][j].add()
+        pos[i][j].add();
       }
+    }
   
   
   //Compute (damped) Hooke's law for each spring
