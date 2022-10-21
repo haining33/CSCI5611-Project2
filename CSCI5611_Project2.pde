@@ -38,8 +38,8 @@ void setup() {
 //Simulation Parameters
 int numRows = 40;
 int numCols = 40;
-float k = 10; //spring constant
-float kv = 12; //damping factor
+float ks = 10; //spring constant
+float kd = 12; //damping factor
 float l0 = 10; //rest length
 
 
@@ -49,7 +49,7 @@ float clothX = 100;
 float clothY = -50; 
 float clothZ = -200;
 float dt = 1/frameRate;
-float gravity = 0.02；
+float gravity = 0.02;
 
 //Initial positions and velocities of masses
 // static int maxNodes = 40;
@@ -96,7 +96,7 @@ void update(float dt){
       float v1 = dot(vel[i][j],e);
       float v2 = dot(vel[i+1][j],e);
       float f_down = -ks*(l0-l)-kd*(v1-v2);
-      temp = e.times(f_down*dt);
+      Vec3 temp = e.times(f_down*dt);
       vn[i][j].add(temp);
       vn[i+1][j].subtract(temp);
     }
@@ -127,13 +127,14 @@ void update(float dt){
   //collision detection
   for (int i = 0; i < numRows; i++){
     for (int j = 0; j < numCols; j++){
-      d = spherePos.distanceTo(pos[i][j]);
+      float d = spherePos.distanceTo(pos[i][j]);
       if(d < sphereR + 0.09){
         Vec3 n = (spherePos.minus(pos[i][j])).times(-1);
         n.normalize();
         Vec3 bounce = n.times(dot(vel[i][j], n));
         vel[i][j].subtract(bounce.times(1.5));
-        pos[i][j].add();
+        float temp = 0.1 * sphereR - d;
+        pos[i][j].add(n.times(temp));
       }
     }
   }

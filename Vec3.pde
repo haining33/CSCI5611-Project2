@@ -108,9 +108,6 @@ Vec3 projAB(Vec3 a, Vec3 b){
   return new Vec3(temp*b.x, temp*b.y,temp*b.z);
 }
 
-float interpolate(float a, float b, float t){
-  return a + ((b-a)*t);
-}
 
 float angle(Vec3 a, Vec3 b){
   return acos(dot(a,b)/(a.length()*b.length()));
