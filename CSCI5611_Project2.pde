@@ -42,18 +42,20 @@ float k = 10; //spring constant
 float kv = 12; //damping factor
 float l0 = 10; //rest length
 
-float clothXStart = 100; 
-float clothYStart = -50; 
-float clothZStart = -80;
+
+Vec3 spherePos = new Vec3(50, -200, -150)
+float sphereR = 100;
+float clothX = 100; 
+float clothY = -50; 
+float clothZ = -200;
 float dt = 1/frameRate;
 float gravity = 0.02
 
 //Initial positions and velocities of masses
 static int maxNodes = 40;
-Vec2 pos[][] = new Vec2[maxNodes][maxNodes];
-Vec2 vel[][] = new Vec2[maxNodes][maxNodes];
+Vec3 pos[][] = new Vec3[maxNodes][maxNodes];
+Vec3 vel[][] = new Vec3[maxNodes][maxNodes];
 // Vec2 acc[] = new Vec2[maxNodes];
-
 
 
 // void initScene(){
@@ -69,7 +71,7 @@ boolean mouse  = false;
 void initClothNodes(){
   for (int j=0; j< numCols; j++){
     for (int i=0; i<numRows; i++){
-      pos[i][j]= new Vec3(clothXStart + l0 * j + clothZStart, clothYStart, clothZStart + l0 * i);
+      pos[i][j]= new Vec3(clothX + l0 * j + clothZ, clothY, clothZ + l0 * i);
       vel[i][j] = new Vec3(0,0,0);
     }
   }
@@ -84,9 +86,10 @@ void update(float dt){
   
 
   //horizontal 
-
+  Vec3[][] vn = new Vec3[numRows][numCols]; //new velocity buffer
+  arrayCopy(vel, vn);
   for (int i = 0; i < numRows-1; i++){
-      for (int j = 0; j < numCols; j++){
+    for (int j = 0; j < numCols; j++){
       Vec3 e = pos[i+1][j].minus(pos[i][j]);
       float l = e.length();
       e.mul(1.0/l);
@@ -94,13 +97,13 @@ void update(float dt){
       float v2 = dot(vel[i+1][j],e);
       float f_down = -ks*(l0-l)-kd*(v1-v2);
       temp = e.times(f_down*dt);
-      vel_new[i][j].add(temp);
-      vel_new[i+1][j].subtract(temp);
+      vn[i][j].add(temp);
+      vn[i+1][j].subtract(temp);
     }
   }
   //vertical force
   for (int i = 0; i < numRows; i++){
-      for (int j = 0; j < numCols-1; j++){
+    for (int j = 0; j < numCols-1; j++){
       //Compute string length
       Vec3 e = pos[i][j+1].minus(pos[i][j]);
       float l = e.length();
@@ -109,17 +112,27 @@ void update(float dt){
       float v2 = dot(vel[i][j+1],e);
       float f_side = -ks*(l0-l)-kd*(v1-v2);
       Vec3 temp = e.times(f_side*dt);
-      vel_new[i][j].add(temp);
-      vel_new[i][j+1].subtract(temp);
+      vn[i][j].add(temp);
+      vn[i][j+1].subtract(temp);
     }
   }
 
 //gravity
-  for (int j=0; j< numCols; j++){
-    for (int i=0; i<numRows; i++){
-      vel_new[i][j].y += gravity;
+  for (int i = 0; i < numRows; i++){
+    for (int j = 0; j < numCols; j++){
+      vn[i][j].y += gravity;
     }
   }
+  //collision detection
+  for (int i = 0; i < numRows; i++){
+    for (int j = 0; j < numCols; j++){
+      d = spherePos.distanceTo(pos[i][j])
+      if(d < sphereR + 0.09){
+        Vec3 n = (spherePos.minus(pos[i][j])).times(-1);
+        n.normalize();
+        Vec3 bounce = v[i][j]
+      }
+  
   
   //Compute (damped) Hooke's law for each spring
   // for (int i = 0; i < numNodes-1; i++){
