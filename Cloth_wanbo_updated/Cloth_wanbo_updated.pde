@@ -11,15 +11,16 @@ float weight = 0.04;
 float gravityVal = 40;
 
 /*camera code*/
-float camX = -400;
+float camX = -503.0;
 float camY = 100.0; //58
-float camZ = -100;
+float camZ = -121;
 
-float dirX = 0.50553316;
-float dirY = 0.0;
-float dirZ = 0.86280715;
+// float dirX = 0.50553316;
+// float dirY = 0.0;
+// float dirZ = 0.86280715;
 
-float angle = 0.01;
+// float angle = 1.48;
+// float angle = 0.7;
 float pc = 0.00000005;
 
 
@@ -48,16 +49,16 @@ void setup(){
 
  
 void keyPressed(){
-    if (keyCode == UP){
-        camX += dirX; camY += dirY; camZ += dirZ; //Move the camera in the forward direction
-        print(camX);
-        print(camY);
-    }
-    if (keyCode == DOWN){
-        camX -= dirX; camY -= dirY; camZ -= dirZ; //Move the camera in the backward direction
-        print(camX);
-        print(camY);
-    }
+    // if (keyCode == UP){
+    //     camX += dirX; camY += dirY; camZ += dirZ; //Move the camera in the forward direction
+    //     print(camX);
+    //     print(camY);
+    // }
+    // if (keyCode == DOWN){
+    //     camX -= dirX; camY -= dirY; camZ -= dirZ; //Move the camera in the backward direction
+    //     print(camX);
+    //     print(camY);
+    // }
     if (key == 'r') {
         print("resetting");
         for (int i = 0; i < numRows; i++){
@@ -70,40 +71,42 @@ void keyPressed(){
     }
 
     if (key == 'w') {
-        camY += 1;
-        print(camY);
+        camY += 50;
+        print("Y:" + camY);
     }
     if (key == 's') {
-        camY -= 1;
-        print(camY);
+        camY -= 50;
+        print("Y:" + camY);
     }
     if (key == 'd') {
-        camZ -= 1;
-        print(camZ);
+        camZ -= 50;
+        print("Z:" + camZ);
     }
     if (key == 'a') {
-        camZ += 1;
-        print(camZ);
+        camZ += 50;
+        print("Z:"+ camZ);
     }
-    if (keyCode == RIGHT) {
-        angle -= .01;//Turn the forward direction left/right
-        print(angle);
-    }  
-    if (keyCode == LEFT) {
-        angle += .01;
-        print(angle);
-    }
+    // if (keyCode == RIGHT) {
+    //     angle -= .01;//Turn the forward direction left/right
+    //     print(angle);
+    // }  
+    // if (keyCode == LEFT) {
+    //     angle += .01;
+    //     print(angle);
+    // }
    
-    dirX = sin(angle); //Compute the forward direction form the angle
-    dirZ = cos(angle);
+    // dirX = sin(angle); //Compute the forward direction form the angle
+    // dirZ = cos(angle);
 }
 
 // int i = 0;
 void draw(){
+
     background(255, 255, 255);
     lights();
     // updateSimpleCamera();
-    camera(camX,camY,camZ,camX+dirX,camY+dirY,camZ+dirZ,0,1,0);
+    camera(camX,camY,camZ, spherePos.x, spherePos.y, spherePos.z,0,1,0);
+    rotateY(-PI/6);
     update(dt);
 
     /*draw sphere*/
