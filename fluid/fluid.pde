@@ -1,5 +1,5 @@
 static int n = 60; //number of cells
-float dx = 800.0/n; //500 pixels long
+float dx = 800.0/n; //800 pixels long
 //  
 // float dt = 0.01; //update rate
 
@@ -13,6 +13,8 @@ float h_mid[] = new float[n]; //Height
 float hu_mid[] = new float[n]; //Momentum
 float dhdt_mid[] = new float[n]; //Height
 float dhudt_mid[] = new float [n]; //Momentum
+
+
 
 boolean periodic = true;
 boolean free = false;
@@ -74,25 +76,22 @@ void setup(){
     background(255);
     initHeight();
 }
+
 void draw(){
   background(255);
   noStroke();
   fill(105,206,235);  
   update(1/frameRate);
-  // float a = h[0]+(h[0]-h[1])/2;
   for (int i=0; i<n-1; i++){
-    // float b = (h[i]+h[i+1])/2;
-    //update(dt);
     beginShape(QUADS);
     vertex(dx*i,height-h[i]);
     vertex(dx*(i+1)+1,height-h[i+1]);
     vertex(dx*(i+1)+1,height);
     vertex(dx*i,height);
     endShape(CLOSE); 
-    // a = b;
   }
-
 }
+
 void keyReleased()
 {
   if (key == 'r'){

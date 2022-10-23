@@ -9,11 +9,14 @@ float kd = 1000*2;
 float ks = 10000*3500;
 float weight = 0.04;
 float gravityVal = 40;
+float angle = -PI/6;
 
 boolean w = false;
 boolean a = false;
 boolean s = false;
 boolean d = false;
+boolean turnRight = false;
+boolean turnLeft = false;
 /*camera code*/
 float camX = -503.0;
 float camY = 100.0; //58
@@ -54,7 +57,7 @@ void draw(){
     lights();
     // updateSimpleCamera();
     camera(camX,camY,camZ, -200, 100, 75 ,0,1,0);
-    rotateY(-PI/6);
+    rotateY(angle);
     update(dt);
 
     /*draw sphere*/
@@ -80,7 +83,12 @@ void draw(){
         spherePos.x -= 5;
         // print(spherePos.x);
     }
-
+    if(turnLeft){
+      angle += PI/18;
+    }
+    if(turnRight){
+      angle -= PI/18;
+    }
     /*draw cloth*/
     for (int i = 0; i < numRows - 1; i++){
         for (int j = 0; j < numCols - 1; j++){
@@ -94,6 +102,7 @@ void draw(){
         }
     }
 }
+
 void keyPressed(){
     // if (keyCode == UP){
     //     camX += dirX; camY += dirY; camZ += dirZ; //Move the camera in the forward direction
@@ -105,6 +114,7 @@ void keyPressed(){
     //     print(camX);
     //     print(camY);
     // }
+
     if (key == 'r'){
         print("resetting\n");
         for (int i = 0; i < numRows; i++){
@@ -129,14 +139,13 @@ void keyPressed(){
         a = true;
         //print("Z:"+ camZ);
     }
-    // if (keyCode == RIGHT) {
-    //     angle -= .01;//Turn the forward direction left/right
-    //     print(angle);
-    // }  
-    // if (keyCode == LEFT) {
-    //     angle += .01;
-    //     print(angle);
-    // }
+     if (keyCode == RIGHT) {
+       turnRight = true;
+     }  
+     if (keyCode == LEFT) {
+         turnLeft = true;
+         //print(angle);
+     }
    
     // dirX = sin(angle); //Compute the forward direction form the angle
     // dirZ = cos(angle);
@@ -155,6 +164,13 @@ void keyReleased() {
     if (key == 'a') {
         a = false;
     }
+    if (keyCode == LEFT) {
+         turnLeft = false;
+         //print(angle);
+     }
+     if (keyCode == RIGHT) {
+       turnRight = false;
+     } 
 }
 
 void initClothNodes(){
