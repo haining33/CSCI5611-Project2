@@ -10,17 +10,15 @@ float ks = 10000*3500;
 float weight = 0.04;
 float gravityVal = 40;
 
+boolean w = false;
+boolean a = false;
+boolean s = false;
+boolean d = false;
 /*camera code*/
 float camX = -503.0;
 float camY = 100.0; //58
-float camZ = -121;
+float camZ = 579;
 
-// float dirX = 0.50553316;
-// float dirY = 0.0;
-// float dirZ = 0.86280715;
-
-// float angle = 1.48;
-// float angle = 0.7;
 float pc = 0.00000005;
 
 
@@ -36,7 +34,7 @@ public void update(float dt){
     updateHoriz();
     updateVerti();
     collisionDetect();
-    idk();
+    drag();
     gravity();
     updateVel();
 }
@@ -48,6 +46,54 @@ void setup(){
 }
 
  
+
+// int i = 0;
+void draw(){
+
+    background(255, 255, 255);
+    lights();
+    // updateSimpleCamera();
+    camera(camX,camY,camZ, -200, 100, 75 ,0,1,0);
+    rotateY(-PI/6);
+    update(dt);
+
+    /*draw sphere*/
+    pushMatrix();
+    noStroke();
+    fill(50,205,50);
+    translate(spherePos.x, spherePos.y, spherePos.z);
+    sphere(45);
+    popMatrix();
+
+    if(w){
+        spherePos.y -= 5;
+        // print("spherePos:" + spherePos.y);
+    }
+    if(s){
+        spherePos.y += 5;
+        // print("spherePos:" + spherePos.y);
+    }
+    if(d){
+        spherePos.x += 5;
+        // print(spherePos.x);
+    }if(a){
+        spherePos.x -= 5;
+        // print(spherePos.x);
+    }
+
+    /*draw cloth*/
+    for (int i = 0; i < numRows - 1; i++){
+        for (int j = 0; j < numCols - 1; j++){
+            beginShape(QUADS);
+            fill(255,0,255);
+            vertex(pos[i][j].x, pos[i][j].y, pos[i][j].z);
+            vertex(pos[i+1][j].x, pos[i+1][j].y, pos[i+1][j].z);
+            vertex(pos[i+1][j+1].x, pos[i+1][j+1].y, pos[i+1][j+1].z);
+            vertex(pos[i][j+1].x, pos[i][j+1].y, pos[i][j+1].z);
+            endShape();
+        }
+    }
+}
 void keyPressed(){
     // if (keyCode == UP){
     //     camX += dirX; camY += dirY; camZ += dirZ; //Move the camera in the forward direction
@@ -59,8 +105,8 @@ void keyPressed(){
     //     print(camX);
     //     print(camY);
     // }
-    if (key == 'r') {
-        print("resetting");
+    if (key == 'r'){
+        print("resetting\n");
         for (int i = 0; i < numRows; i++){
             for (int j = 0; j < numCols; j++){
                 vel[i][j] = new Vec3(0, 0, 0);
@@ -71,20 +117,17 @@ void keyPressed(){
     }
 
     if (key == 'w') {
-        camY += 50;
-        print("Y:" + camY);
+        w = true;
     }
     if (key == 's') {
-        camY -= 50;
-        print("Y:" + camY);
+        s = true;
     }
     if (key == 'd') {
-        camZ -= 50;
-        print("Z:" + camZ);
+        d = true;
     }
     if (key == 'a') {
-        camZ += 50;
-        print("Z:"+ camZ);
+        a = true;
+        //print("Z:"+ camZ);
     }
     // if (keyCode == RIGHT) {
     //     angle -= .01;//Turn the forward direction left/right
@@ -99,35 +142,18 @@ void keyPressed(){
     // dirZ = cos(angle);
 }
 
-// int i = 0;
-void draw(){
-
-    background(255, 255, 255);
-    lights();
-    // updateSimpleCamera();
-    camera(camX,camY,camZ, spherePos.x, spherePos.y, spherePos.z,0,1,0);
-    rotateY(-PI/6);
-    update(dt);
-
-    /*draw sphere*/
-    pushMatrix();
-    noStroke();
-    fill(50,205,50);
-    translate(-200, 100, 75);
-    sphere(45);
-    popMatrix();
-
-    /*draw cloth*/
-    for (int i = 0; i < numRows - 1; i++){
-        for (int j = 0; j < numCols - 1; j++){
-            beginShape(QUADS);
-            fill(255,0,255);
-            vertex(pos[i][j].x, pos[i][j].y, pos[i][j].z);
-            vertex(pos[i+1][j].x, pos[i+1][j].y, pos[i+1][j].z);
-            vertex(pos[i+1][j+1].x, pos[i+1][j+1].y, pos[i+1][j+1].z);
-            vertex(pos[i][j+1].x, pos[i][j+1].y, pos[i][j+1].z);
-            endShape();
-        }
+void keyReleased() {
+    if (key == 'w') {
+        w = false;
+    }
+    if (key == 's') {
+        s = false;
+    }
+    if (key == 'd') {
+        d = false;
+    }
+    if (key == 'a') {
+        a = false;
     }
 }
 
@@ -208,7 +234,7 @@ void updateVerti(){
     }
 }
 
-void idk(){
+void drag(){
     for (int i = 0; i < numRows-1; i++){
         for (int j = 0; j < numCols-1; j++){
         Vec3 c1 = pos[i][j + 1].minus(pos[i][j]);
@@ -254,4 +280,3 @@ void updateVel(){
         }
     }
 }
-
