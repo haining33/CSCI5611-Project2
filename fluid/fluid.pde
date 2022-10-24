@@ -101,5 +101,6 @@ void keyReleased()
   }
   if(keyCode == UP){
     h[n/2] = 500;
+    h[n/2 + 1] = 490;
   }
 }
