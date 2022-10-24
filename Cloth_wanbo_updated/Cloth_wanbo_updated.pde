@@ -1,15 +1,16 @@
-PImage img;
 int numRows = 30;
 int numCols = 30;
 float l0 = 10;
 
 
 /* ks, kd, weight need modification */
-float kd = 1000*2;
-float ks = 10000*3500;
+float kd = 2500;
+float ks = 32000000;
 float weight = 0.04;
 float gravityVal = 40;
-float angle = -PI/6;
+float c = 0.00000007;
+float angleY = -PI/6;
+float angleX = 0;
 
 boolean w = false;
 boolean a = false;
@@ -17,17 +18,16 @@ boolean s = false;
 boolean d = false;
 boolean turnRight = false;
 boolean turnLeft = false;
+boolean turnUp = false;
+boolean turnDown = false;
+
 /*camera code*/
-float camX = -503.0;
-float camY = 100.0; //58
-float camZ = 579;
-
-float pc = 0.00000005;
-
-
+float camX = -800.0;
+float camY = 50.0;
+float camZ = 100;
 float dt = 1/(frameRate*30);
 
-Vec3 spherePos = new Vec3(-200, 100, 75);
+Vec3 spherePos = new Vec3(-175, 100, 175);
 Vec3 pos[][] = new Vec3[numRows][numCols];
 Vec3 vn[][] = new Vec3[numRows][numCols];
 Vec3 vel[][] = new Vec3[numRows][numCols];
@@ -44,20 +44,15 @@ public void update(float dt){
 
 void setup(){
     size(1000, 1000, P3D);
-    img = loadImage("flag.png");
     initClothNodes();
 }
 
- 
 
-// int i = 0;
 void draw(){
-
-    background(255, 255, 255);
+    background(135, 206, 235);
     lights();
-    // updateSimpleCamera();
-    camera(camX,camY,camZ, -200, 100, 75 ,0,1,0);
-    rotateY(angle);
+    camera(camX,camY,camZ, -200, 100, 75 , 0, 1, 0);
+    rotateY(angleY);
     update(dt);
 
     /*draw sphere*/
@@ -65,67 +60,53 @@ void draw(){
     noStroke();
     fill(50,205,50);
     translate(spherePos.x, spherePos.y, spherePos.z);
-    sphere(45);
+    sphere(35);
     popMatrix();
+    drawCloth();
 
+    /* control ball*/
     if(w){
-        spherePos.y -= 5;
+        spherePos.y -= 3;
         // print("spherePos:" + spherePos.y);
     }
     if(s){
-        spherePos.y += 5;
+        spherePos.y += 3;
         // print("spherePos:" + spherePos.y);
     }
     if(d){
-        spherePos.x += 5;
+        spherePos.x += 3;
         // print(spherePos.x);
     }if(a){
-        spherePos.x -= 5;
+        spherePos.x -= 3;
         // print(spherePos.x);
     }
+
+    /* control camera*/
     if(turnLeft){
-      angle += PI/18;
+      angleY += PI/144;
     }
     if(turnRight){
-      angle -= PI/18;
+      angleY -= PI/144;
     }
-    /*draw cloth*/
-    for (int i = 0; i < numRows - 1; i++){
-        for (int j = 0; j < numCols - 1; j++){
-            beginShape(QUADS);
-            fill(255,0,255);
-            vertex(pos[i][j].x, pos[i][j].y, pos[i][j].z);
-            vertex(pos[i+1][j].x, pos[i+1][j].y, pos[i+1][j].z);
-            vertex(pos[i+1][j+1].x, pos[i+1][j+1].y, pos[i+1][j+1].z);
-            vertex(pos[i][j+1].x, pos[i][j+1].y, pos[i][j+1].z);
-            endShape();
-        }
+    if(turnUp){
+      camX += 5;
+    }
+    if(turnDown){
+      camX -= 5;
     }
 }
 
 void keyPressed(){
-    // if (keyCode == UP){
-    //     camX += dirX; camY += dirY; camZ += dirZ; //Move the camera in the forward direction
-    //     print(camX);
-    //     print(camY);
-    // }
-    // if (keyCode == DOWN){
-    //     camX -= dirX; camY -= dirY; camZ -= dirZ; //Move the camera in the backward direction
-    //     print(camX);
-    //     print(camY);
-    // }
-
     if (key == 'r'){
         print("resetting\n");
         for (int i = 0; i < numRows; i++){
             for (int j = 0; j < numCols; j++){
                 vel[i][j] = new Vec3(0, 0, 0);
                 vn[i][j] = new Vec3(0, 0, 0);
-                pos[i][j] = new Vec3(i * -10, 0, j * 10);
+                pos[i][j] = new Vec3(i*-10, 0, j*10);
             }
         }
     }
-
     if (key == 'w') {
         w = true;
     }
@@ -137,18 +118,19 @@ void keyPressed(){
     }
     if (key == 'a') {
         a = true;
-        //print("Z:"+ camZ);
     }
-     if (keyCode == RIGHT) {
-       turnRight = true;
-     }  
-     if (keyCode == LEFT) {
-         turnLeft = true;
-         //print(angle);
-     }
-   
-    // dirX = sin(angle); //Compute the forward direction form the angle
-    // dirZ = cos(angle);
+    if (keyCode == RIGHT) {
+        turnRight = true;
+    }  
+    if (keyCode == LEFT) {
+        turnLeft = true;
+    }
+    if (keyCode == UP) {
+        turnUp = true;
+    }
+    if (keyCode == DOWN) {
+        turnDown = true;
+    }
 }
 
 void keyReleased() {
@@ -165,12 +147,17 @@ void keyReleased() {
         a = false;
     }
     if (keyCode == LEFT) {
-         turnLeft = false;
-         //print(angle);
+        turnLeft = false;
      }
-     if (keyCode == RIGHT) {
+    if (keyCode == RIGHT) {
        turnRight = false;
-     } 
+    }
+    if (keyCode == UP) {
+        turnUp = false;
+    }
+    if (keyCode == DOWN) {
+        turnDown = false;
+    }
 }
 
 void initClothNodes(){
@@ -193,20 +180,44 @@ void setVel(){
     }
 }
 
+void drawCloth(){
+     /*draw cloth*/
+    for (int i = 0; i < numRows - 1; i++){
+        for (int j = 0; j < numCols - 1; j++){
+            beginShape(TRIANGLE_FAN);
+            if (j % 2 == 0){
+                fill(255, 255, 0);
+            }
+            else{
+                fill(255, 89, 143);
+            }
+            if (i % 2 == 0){
+                fill(255, 255, 0);
+            }
+            else{
+                fill(255, 89, 143);
+            }
+            vertex(pos[i][j].x, pos[i][j].y, pos[i][j].z);
+            vertex(pos[i+1][j].x, pos[i+1][j].y, pos[i+1][j].z);
+            vertex(pos[i+1][j+1].x, pos[i+1][j+1].y, pos[i+1][j+1].z);
+            vertex(pos[i][j+1].x, pos[i][j+1].y, pos[i][j+1].z);
+            endShape();
+        }
+    }
+}
+
 void collisionDetect(){
     /* detect collisions*/
     for (int i = 0 ; i < numRows; i++){
         for (int j = 0 ; j < numCols; j++){
             float distance = spherePos.distanceTo(pos[i][j]);
-            if (distance < 50 + 0.99 + 5){
+            if (distance < 45 + 0.99){
                 Vec3 n = (spherePos.minus(pos[i][j])).times(-1);
                 n = n.normalized();
                 Vec3 bounce = n.times(dot(vel[i][j], n));
                 vel[i][j] = vel[i][j].minus(bounce.times(1.5));
-                // vel[i][j].subtract(bounce.times(1.5));
-                float temp = 55 - distance;
+                float temp = 45 - distance;
                 pos[i][j] = pos[i][j].plus(n.times(temp));
-                // pos[i][j].add(n.times(temp));
             }
         }
     }
@@ -223,9 +234,7 @@ void updateHoriz(){
             float v2 = dot(vel[i+1][j],e);
             float f = weight * (-ks*(l0-l) - kd * (v1-v2));
             Vec3 temp = e.times(f * dt);
-            // vn[i][j] = vn[i][j].plus(temp);
             vn[i][j].add(temp);
-            // vn[i+1][j] = vn[i+1][j].minus(temp);
             vn[i+1][j].subtract(temp);
         }
     }
@@ -242,35 +251,31 @@ void updateVerti(){
             float v2 = dot(vel[i][j+1],e);
             float f = weight *(-ks*(l0-l) - kd * (v1-v2));
             Vec3 temp = e.times(f * dt);
-            // vn[i][j] = vn[i][j].plus(temp);
             vn[i][j].add(temp);
-            // vn[i][j+1] = vn[i][j+1].minus(temp);
             vn[i][j+1].subtract(temp);
         }
     }
 }
 
 void drag(){
+    /*add air drag*/
     for (int i = 0; i < numRows-1; i++){
         for (int j = 0; j < numCols-1; j++){
-        Vec3 c1 = pos[i][j + 1].minus(pos[i][j]);
-        Vec3 c2 = pos[i+1][j].minus(pos[i][j]);
-        Vec3 n = c1.cross(c2);
-     
+        Vec3 r2r1 = pos[i][j + 1].minus(pos[i][j]);
+        Vec3 r3r1 = pos[i+1][j].minus(pos[i][j]);
+        Vec3 n = cross(r2r1,r3r1);
+        
         Vec3 v = vn[i][j].plus(vn[i][j+1].plus(vn[i+1][j]));
-        v = v.div(3);
-        float vvn = dot(v,n) * v.mag();
-        vvn /= 2;
-        vvn /= n.mag();
-        Vec3 van = n.times(vvn);
+        v = v.divide(3);
+
+        float v2n = dot(v,n) * v.length();
+        v2n /= 2*(n.length());
+        Vec3 v2an = n.times(v2n);
+        v2an = (v2an.times(-0.5)).times(c);
      
-        van = van.times(-0.5);
-        van = van.times(pc);
-     
-        vn[i][j] = vn[i][j].plus(van);
-        vn[i][j+1] = vn[i][j+1].plus(van);
-        vn[i+1][j] = vn[i+1][j].plus(van);
-     
+        vn[i][j] = vn[i][j].plus(v2an);
+        vn[i][j+1] = vn[i][j+1].plus(v2an);
+        vn[i+1][j] = vn[i+1][j].plus(v2an);
         }    
     }
 }

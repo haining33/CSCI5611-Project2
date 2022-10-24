@@ -5,14 +5,6 @@ public class Vec3 {
     this.x=x;this.y=y;this.z=z;
   }
 
-   public Vec3 cross(Vec3 vector){
-    float x, y, z;
-    x = (this.y * vector.z) - (this.z * vector.y);
-    y = (this.z * vector.x) - (this.x * vector.z);
-    z = (this.x * vector.y) - (this.y * vector.x);
-    return new Vec3(x, y, z);
-  }
-  
   public String toString(){
     return "(" + x+ ", " + y + ", " + z +")";
   }
@@ -51,12 +43,8 @@ public class Vec3 {
     z *= rhs;
   }
   
-  public Vec3 div(float scalar){
-    return new Vec3(this.x / scalar, this.y / scalar, this.z / scalar);
-  }
-  
-  public float mag(){
-    return sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+  public Vec3 divide(float rhs){
+    return new Vec3(x/rhs, y/rhs, z/rhs);
   }
   
   public void normalize(){
