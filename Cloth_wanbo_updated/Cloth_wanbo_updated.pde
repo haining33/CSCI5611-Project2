@@ -5,13 +5,14 @@ float l0 = 10;
 
 /* ks, kd, weight need modification */
 float kd = 2500;
-float ks = 32000000;
-float weight = 0.04;
-float gravityVal = 40;
+float ks = 35000000;
+float weight = 0.05;
+float gravityVal = 50;
 float c = 0.00000007;
 float angleY = -PI/6;
 float angleX = 0;
 
+boolean start = false;
 boolean w = false;
 boolean a = false;
 boolean s = false;
@@ -53,7 +54,9 @@ void draw(){
     lights();
     camera(camX,camY,camZ, -200, 100, 75 , 0, 1, 0);
     rotateY(angleY);
-    update(dt);
+    if(start){
+        update(dt);
+    }
 
     /*draw sphere*/
     pushMatrix();
@@ -64,6 +67,10 @@ void draw(){
     popMatrix();
     drawCloth();
 
+    userInteract();
+}
+
+void userInteract(){
     /* control ball*/
     if(w){
         spherePos.y -= 3;
@@ -97,6 +104,9 @@ void draw(){
 }
 
 void keyPressed(){
+    if (key == ' '){
+        start = !start;
+    }
     if (key == 'r'){
         print("resetting\n");
         for (int i = 0; i < numRows; i++){
