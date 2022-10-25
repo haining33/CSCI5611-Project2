@@ -281,7 +281,7 @@ void drag(){
         float v2n = dot(v,n) * v.length();
         v2n /= 2*(n.length());
         Vec3 v2an = n.times(v2n);
-        v2an = (v2an.times(-0.5)).times(c);
+        v2an = (v2an.times(-.5)).times(c);
      
         vn[i][j] = vn[i][j].plus(v2an);
         vn[i][j+1] = vn[i][j+1].plus(v2an);
